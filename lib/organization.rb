@@ -8,8 +8,9 @@ class Organization < ActiveRecord::Base
     parent.nesting + 1
   end
 
-  def total_investments
+  def total_investments(all_investments)
+    investments = all_investments.select { |i| i.organization_id == id }
     investments.map(&:cost).sum(0) +
-    children.map(&:total_investments).sum(0)
+    children.map { |o| o.total_investments(all_investments) }.sum(0)
   end
 end
