@@ -8,17 +8,17 @@ class Organization < ActiveRecord::Base
     parent.nesting + 1
   end
 
-  def total_investments(all_investments)
-    investments = all_investments.select { |i| i.organization_id == id }
+  def total_investments
     investments.map(&:cost).sum(0) +
-    children.map { |o| o.total_investments(all_investments) }.sum(0)
+    children.map(&:total_investments).sum(0)
   end
 
-  def self.with_cached_relations
+  def self.with_cached_relations(investments)
     Organization.all.tap do |all|
       all.each do |parent|
         parent.extend RelationCache
         parent.children = []
+        parent.investments = investments.select { |i| i.organization_id == parent.id }
 
         all.each do |possible_child|
           possible_child.extend RelationCache
@@ -35,5 +35,6 @@ class Organization < ActiveRecord::Base
   module RelationCache
     attr_accessor :parent
     attr_accessor :children
+    attr_accessor :investments
   end
 end

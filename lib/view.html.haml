@@ -19,7 +19,7 @@
         - @organizations.each do |organization|
           %li
             #{("&nbsp;"*(organization.nesting*3))}#{organization.name}
-            \- $#{organization.total_investments(@investments)}
+            \- $#{organization.total_investments}
 
     .investments
       %h2 Investments
