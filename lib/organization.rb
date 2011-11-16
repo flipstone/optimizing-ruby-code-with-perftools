@@ -13,12 +13,11 @@ class Organization < ActiveRecord::Base
     children.map(&:total_investments).sum(0)
   end
 
-  def self.with_cached_relations(investments)
-    Organization.all.tap do |all|
+  def self.with_cached_relations
+    Organization.includes(:investments).tap do |all|
       all.each do |parent|
         parent.extend RelationCache
         parent.children = []
-        parent.investments = investments.select { |i| i.organization_id == parent.id }
 
         all.each do |possible_child|
           possible_child.extend RelationCache
@@ -35,6 +34,5 @@ class Organization < ActiveRecord::Base
   module RelationCache
     attr_accessor :parent
     attr_accessor :children
-    attr_accessor :investments
   end
 end

@@ -3,7 +3,7 @@ class View
 
   def self.render
     @investments = Investment.order('cost DESC')
-    @organizations = Organization.with_cached_relations @investments
+    @organizations = Organization.with_cached_relations
 
     ::Haml::Engine.new(File.read(VIEW_PATH), :filename => 'view.html.haml').render(self)
   end
